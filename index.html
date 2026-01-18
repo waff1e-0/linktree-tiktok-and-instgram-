@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@waff1e.0</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Miss+Fajardose&display=swap" as="style">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@200;400;700&display=swap" as="style">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Satoshi:wght@400;700&display=swap" as="style">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link href="https://fonts.googleapis.com/css2?family=Miss+Fajardose&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@200;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Satoshi:wght@400;700&display=swap" rel="stylesheet">
+
+    <link rel="icon" type="image/gif" href="icon.jpg">
+
+    <style>
+        /* CSS Variables for easier theme management */
+        :root {
+            --primary-color: #C6BFB4;
+            --background-card-color: #c6bfb471;
+            --text-color-light: #E9E3D9;
+            --text-shadow-light: 0 0 6px var(--text-color-light), 0 0 18px var(--text-color-light);
+            --shadow-dark: rgba(0, 0, 0, 0.3);
+            --shadow-light: rgba(255, 255, 255, 0.5);
+            --blur-strength: 15px;
+        }
+
+        /* Basic Reset & Selection */
+        ::selection {
+            background: var(--primary-color);
+            color: #C6BFB4;
+        }
+
+        /* Set default cursor with fallback */
+        * {
+            cursor: url(cursor.png) 16 16, auto !important; /* Specify hotspot for custom cursor */
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+        }
+
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+            overflow: hidden; /* Prevent scrolling on the main page */
+        }
+
+        /* Clock Hint Overlay for Autoplay Compliance */
+        .clock-hint {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            font-size: 16px;
+            border-radius: 8px;
+            z-index: 100; /* Ensure it's above other content */
+            /* Start hidden, JavaScript will control display and opacity */
+            display: none;
+            opacity: 0;
+            transition: opacity 0.6s ease-out; /* Smooth fade-out */
+        }
+
+        /* Background & Overlay */
+        .background {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: url("background.jpg") no-repeat center center / cover;
+            filter: blur(7px);
+            z-index: -2; /* Layer below content */
+        }
+
+        .overlay {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: -1; /* Layer between background and content */
+        }
+
+        /* Content Area */
+        .content {
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            padding: 20px; /* Add some padding for smaller screens */
+        }
+
+        /* Profile Card */
+        .card {
+            width: 100%;
+            max-width: 610px;
+            padding: 25px;
+            background-color: var(--background-card-color);
+            backdrop-filter: blur(var(--blur-strength));
+            border-radius: 22px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-pic {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: #e9dcc2;
+            overflow: hidden;
+            margin: 0 auto 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-pic img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block; /* Ensures no extra space below the image */
+        }
+
+        .card h1 { /* Changed from h2 to h1 for semantic correctness and better SEO */
+            font-family: 'Miss Fajardose', cursive;
+            font-size: 2.7rem;
+            font-weight: normal;
+            letter-spacing: 2px;
+            color: var(--text-color-light);
+            text-shadow: var(--text-shadow-light);
+            margin: 0 0 12px 0; /* Adjusted margin for h1 */
+        }
+
+        .card p {
+            color: var(--text-color-light);
+            text-shadow: var(--text-shadow-light);
+            margin-bottom: 12px;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .location {
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+            font-size: 0.85rem;
+            color: var(--text-color-light);
+            text-shadow: var(--text-shadow-light);
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            font-weight: 200;
+        }
+
+        /* Social Icons */
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap; /* Allows icons to wrap on smaller screens */
+            gap: 16px;
+            font-size: 1.8rem;
+            margin-top: 10px;
+        }
+
+        .social-icons a {
+            color: var(--text-color-light);
+            transition: transform 0.3s ease, color 0.3s ease, filter 0.3s ease;
+            filter: drop-shadow(0 0 5px var(--text-color-light));
+            text-decoration: none; /* Remove underline from links */
+            display: inline-flex; /* Ensure icon is treated as a block for consistent spacing/transform */
+            align-items: center;
+            justify-content: center;
+        }
+
+        .social-icons a:hover {
+            transform: scale(1.2);
+            color: var(--primary-color);
+            filter: drop-shadow(0 0 5px var(--primary-color));
+        }
+
+        /* Mini Player */
+        .mini-player {
+            width: 100%;
+            max-width: 610px;
+            padding: 14px 20px;
+            background: var(--background-card-color);
+            backdrop-filter: blur(var(--blur-strength));
+            border-radius: 18px;
+            box-shadow: 0 0 25px var(--shadow-dark);
+            font-family: 'Satoshi', sans-serif;
+            color: var(--text-color-light);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .player-content {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            width: 100%; /* Ensure it takes full width of player */
+        }
+
+        .cover-image {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px var(--shadow-dark);
+            flex-shrink: 0; /* Prevent image from shrinking */
+        }
+
+        .info-controls {
+            flex: 1; /* Allows this div to take remaining space */
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .info-controls p {
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--text-color-light);
+            text-shadow: var(--text-shadow-light);
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis; /* Adds "..." for long titles */
+        }
+
+        /* Timeline (range input) styling for cross-browser consistency */
+        #timeline {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            outline: none;
+            -webkit-appearance: none; /* For Chrome/Safari */
+            -moz-appearance: none;    /* For Firefox */
+            appearance: none;         /* Standard */
+            cursor: pointer;
+            margin: 5px 0;
+        }
+
+        /* Custom thumb styles */
+        #timeline::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: grab;
+            box-shadow: 0 0 5px var(--primary-color);
+            transition: background 0.3s ease;
+        }
+
+        #timeline::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: grab;
+            box-shadow: 0 0 5px var(--primary-color);
+            transition: background 0.3s ease;
+        }
+
+        /* For IE/Edge Legacy */
+        #timeline::-ms-thumb {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: grab;
+            box-shadow: 0 0 5px var(--primary-color);
+            transition: background 0.3s ease;
+        }
+
+        .bottom-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .time-display { /* Removed 'small' as a class, applied to container */
+            font-size: 0.8rem;
+            color: #ccc;
+            white-space: nowrap;
+        }
+
+        .controls {
+            display: flex;
+            gap: 5px;
+        }
+
+        .controls button {
+            background-color: transparent;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--text-color-light);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+        }
+
+        .controls button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 10px var(--shadow-light);
+            color: var(--primary-color);
+        }
+
+        .controls button i {
+            pointer-events: none; /* Ensures click goes to the button, not the icon */
+            filter: drop-shadow(0 0 5px var(--text-color-light));
+            transition: filter 0.3s ease;
+        }
+
+        .controls button:hover i {
+             filter: drop-shadow(0 0 5px var(--primary-color));
+        }
+
+        .backward, .forward {
+            color: rgba(255, 255, 255, 0.7); /* Slightly muted for non-play buttons */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .card, .mini-player {
+                width: 95%; /* Use percentage for better flexibility */
+                padding: 20px;
+            }
+
+            .card h1 {
+                font-size: 2.2rem;
+            }
+
+            .profile-pic {
+                width: 100px;
+                height: 100px;
+            }
+
+            .social-icons {
+                font-size: 1.5rem;
+                gap: 12px;
+            }
+
+            .mini-player {
+                flex-direction: column; /* Stack elements vertically */
+                align-items: center;
+                text-align: center;
+            }
+
+            .player-content {
+                flex-direction: column;
+                gap: 10px;
+                width: 100%;
+            }
+
+            .cover-image {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+
+            .info-controls {
+                align-items: center; /* Center content when stacked */
+            }
+
+            .bottom-line {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .controls {
+                margin-top: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card, .mini-player {
+                padding: 15px;
+            }
+
+            .card h1 {
+                font-size: 1.8rem;
+            }
+
+            .profile-pic {
+                width: 80px;
+                height: 80px;
+            }
+
+            .social-icons {
+                font-size: 1.3rem;
+                gap: 10px;
+            }
+
+            .cover-image {
+                width: 60px;
+                height: 60px;
+            }
+
+            .info-controls p {
+                font-size: 0.9rem;
+            }
+
+            .time-display {
+                font-size: 0.75rem;
+            }
+
+            .controls button {
+                padding: 6px 10px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+    <script src="https://kit.fontawesome.com/a6f097700e.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div id="clockOverlay" class="clock-hint" role="status" aria-live="polite">Click anywhere to start!</div>
+
+    <div class="background" role="img" aria-label="A blurred background image, setting the mood for the profile page."></div>
+    <div class="overlay"></div>
+
+    <div class="content">
+        <main class="card" aria-labelledby="profile-heading">
+            <div class="profile-pic">
+                <img src="https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/14916b1c43bebd526af41a1462e7daf9~tplv-tiktokx-cropcenter:1080:1080.jpeg?dr=14579&refresh_token=7f5e8b8e&x-expires=1768867200&x-signature=ww6hfx7xnqPytNGNMZNj7e0TG4c%3D&t=4d5b0474&ps=13740610&shp=a5d48078&shcp=81f88b70&idc=sg1" alt="Profile picture of Clove" />
+            </div>
+            <h1 id="profile-heading">Waff1e.0</h1>
+            <p>Hi, my name is Waffle.</p>
+            <p style="font-size: 13px;">I love Music and Sophia lillis</p>
+            <div class="location">
+                <i class="fa-solid fa-location-dot" aria-hidden="true"></i> Saudi Arabia. Jubail.
+            </div>
+            <nav class="social-icons" aria-label="Social media links">
+                <a href="https://www.snapchat.com/add/np7-2010" target="_blank" rel="noopener noreferrer" aria-label="Add np7-2010 on Snapchat">
+                    <i class="fab fa-snapchat-ghost" aria-hidden="true"></i>
+                </a>
+                <a href="https://open.spotify.com/user/31vcon7tvxfmcy3mh3x5ppvlupsu?si=54f67a1072f34c66" target="_blank" rel="noopener noreferrer" aria-label="Visit waff1e.0 on Spotify">
+                    <i class="fab fa-spotify" aria-hidden="true"></i>
+                </a>
+                <a href="https://t.me/+aC5IxsTLq0RlNzE0" target="_blank" rel="noopener noreferrer" aria-label="Join Telegram to get clips">
+                    <i class="fa-brands fa-telegram"></i>
+                </a>
+                <a href="https://github.com/waff1e-0" target="_blank" rel="noopener noreferrer" aria-label="Visit waff1e-0 on GitHub">
+                    <i class="fab fa-github" aria-hidden="true"></i>
+                </a>
+                <a href="https://www.instagram.com/waff1e_0" target="_blank" rel="noopener noreferrer" aria-label="Follow waff1e_0 on Instagram">
+                    <i class="fab fa-instagram" aria-hidden="true"></i>
+                </a>
+                    <a href="https://www.tiktok.com/@waff1e.0" target="_blank" rel="noopener noreferrer" aria-label="Follow waff1e.0 on TikTok">
+                    <i class="fab fa-tiktok" aria-hidden="true"></i>
+                </a>
+            </nav>
+        </main>
+
+        <section class="mini-player" aria-label="Music Player">
+            <div class="player-content">
+                <img src="covers/m1.jpg" alt="Current song cover image" class="cover-image" id="coverImage" />
+                <div class="info-controls">
+                    <p id="trackTitle">---</p>
+                    <audio id="audioPlayer" preload="metadata"></audio> <input type="range" id="timeline" value="0" step="1" aria-label="Seek track position">
+                    <div class="bottom-line">
+                        <span class="time-display"><span id="current">0:00</span> / <span id="duration">0:00</span></span>
+                        <div class="controls">
+                            <button class="backward" aria-label="Previous track">
+                                <i class="fa-solid fa-backward-step" aria-hidden="true"></i>
+                            </button>
+                            <button class="play" aria-label="Play/Pause">
+                                <i class="fas fa-play" aria-hidden="true"></i>
+                            </button>
+                            <button class="forward" aria-label="Next track">
+                                <i class="fa-solid fa-forward-step" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <script>
+        // Self-executing anonymous function (IIFE) to prevent global variable pollution
+        (function() {
+            // 🗂️ Track List
+            const tracks = [
+                {
+                    title: "Wet",
+                    file: "audio/wet.mp3",
+                    cover: "covers/wet.jpg"
+                },
+                {
+                    title: "I Thought I Saw Your Face Today",
+                    file: "audio/I Thought I Saw Your Face Today.mp3", // Ensure this matches your actual filename (e.g., if it's sl3y, change it back)
+                    cover: "covers/I Thought I Saw Your Face Today.jpg"
+                },
+                {
+                    title: "Fly",
+                    file: "audio/fly.mp3",
+                    cover: "covers/fly.jpg"
+                }
+            ];
+
+            let currentTrackIndex = 0;
+            let userInteracted = false; // Flag to track user interaction for autoplay policies
+
+            // UI Elements - Get references once for efficiency
+            const audioPlayer = document.getElementById("audioPlayer");
+            const trackTitleEl = document.getElementById("trackTitle");
+            const coverImageEl = document.getElementById("coverImage");
+            const timeline = document.getElementById("timeline");
+            const currentTimeEl = document.getElementById("current");
+            const durationEl = document.getElementById("duration");
+            const playButton = document.querySelector(".play"); // Get the button element
+            const playIcon = playButton.querySelector("i");     // Get the icon inside the button
+            const backwardButton = document.querySelector(".backward");
+            const forwardButton = document.querySelector(".forward");
+            const clockOverlay = document.getElementById("clockOverlay");
+
+
+            // --- Utility Functions ---
+
+            /**
+             * Formats seconds into a human-readable M:SS string.
+             * @param {number} seconds - The total number of seconds.
+             * @returns {string} Formatted time string (e.g., "3:05").
+             */
+            function formatTime(seconds) {
+                if (isNaN(seconds) || seconds < 0) return "0:00"; // Handle invalid time
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = Math.floor(seconds % 60);
+                return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
+            }
+
+            /**
+             * Loads and attempts to play a track. Handles browser autoplay restrictions.
+             * @param {number} index - The index of the track to play.
+             */
+            function playTrack(index) {
+                // Ensure index is within bounds (circular playlist)
+                currentTrackIndex = (index + tracks.length) % tracks.length;
+                const track = tracks[currentTrackIndex];
+
+                if (!track) {
+                    console.error("Track not found at index:", index, "or tracks list is empty.");
+                    trackTitleEl.textContent = "No tracks available";
+                    coverImageEl.src = ""; // Clear cover
+                    audioPlayer.src = ""; // Clear audio source
+                    playIcon.className = "fas fa-play";
+                    timeline.value = 0;
+                    currentTimeEl.textContent = "0:00";
+                    durationEl.textContent = "0:00";
+                    return;
+                }
+
+                audioPlayer.src = track.file;
+                audioPlayer.load(); // Load the new audio source data
+
+                trackTitleEl.textContent = track.title;
+                coverImageEl.src = track.cover;
+
+                // Attempt to play only if user has interacted.
+                // This is the core of handling browser autoplay policies.
+                if (userInteracted) {
+                    audioPlayer.play()
+                        .then(() => {
+                            playIcon.className = "fas fa-pause"; // Update icon to pause
+                        })
+                        .catch(error => {
+                            // This catch block handles cases where autoplay is prevented (e.g., no user gesture)
+                            console.warn("Autoplay or programmatic play prevented:", error.name, error.message);
+                            playIcon.className = "fas fa-play"; // Set icon back to play
+                            // No alert needed here; the "Click anywhere to start!" overlay handles initial interaction
+                        });
+                } else {
+                    playIcon.className = "fas fa-play"; // Ensure play icon is shown if not auto-playing yet
+                }
+            }
+
+            /**
+             * Toggles play/pause state of the audio player.
+             * Marks user interaction on first call to satisfy autoplay policies.
+             */
+            function togglePlay() {
+                // Mark that user has interacted (this is the key for browsers to allow playback)
+                userInteracted = true;
+                hideOverlay(); // Hide the initial overlay once any player control is touched
+
+                if (audioPlayer.paused) {
+                    audioPlayer.play()
+                        .then(() => {
+                            playIcon.className = "fas fa-pause";
+                        })
+                        .catch(error => {
+                            console.warn("Playback prevented (manual play attempt):", error.name, error.message);
+                            playIcon.className = "fas fa-play"; // If play fails, ensure icon reverts
+                            // You might consider a subtle toast notification here if you really want to inform the user,
+                            // but generally, the initial overlay is enough.
+                        });
+                } else {
+                    audioPlayer.pause();
+                    playIcon.className = "fas fa-play";
+                }
+            }
+
+            /**
+             * Advances to the next track in the playlist.
+             */
+            function nextTrack() {
+                currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+                playTrack(currentTrackIndex);
+            }
+
+            /**
+             * Rewinds to the previous track in the playlist.
+             */
+            function prevTrack() {
+                // Ensure index wraps correctly for previous track
+                currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+                playTrack(currentTrackIndex);
+            }
+
+            /**
+             * Hides the initial "click to enter" overlay with a fade-out effect.
+             */
+            function hideOverlay() {
+                // Only hide if it's currently visible
+                if (clockOverlay.style.display === "block" || clockOverlay.style.opacity === "1") {
+                    clockOverlay.style.opacity = '0'; // Start fade out
+                    setTimeout(() => {
+                        clockOverlay.style.display = "none"; // Hide after transition
+                    }, 600); // Match CSS transition duration
+                }
+            }
+
+            // --- Event Listeners ---
+
+            // Initial DOM content loaded - set up initial state
+            document.addEventListener("DOMContentLoaded", () => {
+                if (tracks.length > 0) {
+                    // Set initial track info without playing it immediately
+                    trackTitleEl.textContent = tracks[currentTrackIndex].title;
+                    coverImageEl.src = tracks[currentTrackIndex].cover;
+                    audioPlayer.src = tracks[currentTrackIndex].file;
+                    audioPlayer.load(); // Load metadata to get duration for timeline
+                } else {
+                    trackTitleEl.textContent = "No tracks available";
+                    // Disable player controls if no tracks exist
+                    playButton.disabled = true;
+                    backwardButton.disabled = true;
+                    forwardButton.disabled = true;
+                    timeline.disabled = true;
+                }
+                // Show the overlay initially upon DOM load
+                clockOverlay.style.display = "block";
+                clockOverlay.style.opacity = '1'; // Ensure it's fully visible for initial display
+            });
+
+            // Handle the *very first* user interaction anywhere on the document.
+            // This satisfies most browser autoplay policies.
+            document.addEventListener("click", () => {
+                if (!userInteracted) {
+                    userInteracted = true;
+                    playTrack(currentTrackIndex); // Attempt to play the first track
+                    hideOverlay(); // Hide the initial hint
+                }
+            }, { once: true }); // `once: true` means this listener will automatically remove itself after firing once
+
+            // Update timeline max and duration display when audio metadata is loaded
+            audioPlayer.addEventListener("loadedmetadata", () => {
+                timeline.max = Math.floor(audioPlayer.duration);
+                durationEl.textContent = formatTime(audioPlayer.duration);
+                // Reset timeline to start and update current time when new metadata loads, if paused
+                if (audioPlayer.paused) {
+                    timeline.value = 0;
+                    currentTimeEl.textContent = "0:00";
+                }
+            });
+
+            // Update current time and timeline position as audio plays
+            audioPlayer.addEventListener("timeupdate", () => {
+                // Only update the timeline slider if the user is not actively dragging it
+                if (!timeline.dataset.dragging) {
+                    timeline.value = Math.floor(audioPlayer.currentTime);
+                    currentTimeEl.textContent = formatTime(audioPlayer.currentTime);
+                }
+            });
+
+            // Seek audio when timeline is changed by user
+            timeline.addEventListener("input", () => {
+                audioPlayer.currentTime = timeline.value;
+                currentTimeEl.textContent = formatTime(audioPlayer.currentTime); // Update current time display immediately
+            });
+
+            // Add event listeners for play/pause, next, and previous buttons
+            playButton.addEventListener("click", togglePlay);
+            backwardButton.addEventListener("click", prevTrack);
+            forwardButton.addEventListener("click", nextTrack);
+
+            // Play next track when current track ends
+            audioPlayer.addEventListener("ended", () => {
+                nextTrack();
+            });
+
+            // Optional: Add drag state for timeline to prevent jumps while user is dragging
+            timeline.addEventListener("mousedown", () => {
+                timeline.dataset.dragging = "true";
+            });
+            timeline.addEventListener("mouseup", () => {
+                delete timeline.dataset.dragging;
+            });
+            timeline.addEventListener("touchstart", () => { // For mobile touch events
+                timeline.dataset.dragging = "true";
+            });
+            timeline.addEventListener("touchend", () => {
+                delete timeline.dataset.dragging;
+            });
+
+
+        })(); // End of IIFE
+    </script>
+</body>
+</html>
+
+
+
+
+
